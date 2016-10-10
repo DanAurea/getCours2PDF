@@ -97,7 +97,7 @@ for lien in re.finditer(pattern_liens, reponse):
 
 	image=opener.open(lien.group(1)).read()
 
-	f=open(dossier+'/'+lien.group(2),'w')
+	f=open(dossier+'/'+lien.group(2),'wb')
 	f.write(image)
 	f.close
 	
@@ -123,7 +123,7 @@ os.system(cmd)
 print "\nSupression des images téléchargées.\n"
 
 if OS == "Windows":
-	cmd="del ./Diapo*"
+	cmd="del Diapo*"
 else:
 	cmd="rm ./Diapo*"
 
