@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import urllib
+from platform import system
 import urllib2
 import cookielib
 import re
@@ -8,12 +9,18 @@ import sys
 from time import sleep
 from getpass import getpass
 
-
-
 #FIXME : Corriger l'erreur dans le nommage du dossier lors du téléchargement des diapos sur la POO (via les regexp)
 
-os.system("clear")
+# Récupère le système d'exploitation utilisé
+OS=system()
+
+if OS == "Windows":
+	os.system("cls")
+else:
+	os.system("clear")
+
 print "Bienvenue dans jacoboni2pdf !\nJ'espère que ce petit script vous permettra de ne pas passer 3 heures à récupérer les diapos ;)\n"
+
 
 ## Saisie des identifiants
 login    = raw_input("Quel est votre login ? ")
@@ -103,13 +110,23 @@ print "\nGénération du pdf\n"
 os.chdir(dossier)
 
 PDFName=dossier.replace(" ","-")
-cmd="convert -quality 100 Diapo* TDA-"+PDFName+".pdf"
+
+
+if OS == "Windows":
+	cmd="magick convert -quality 100 Diapo* TDA-"+PDFName+".pdf"
+else:
+	cmd="convert -quality 100 Diapo* TDA-"+PDFName+".pdf"
+
 os.system(cmd)
 
 #Supression des images
 print "\nSupression des images téléchargées.\n"
 
-cmd="rm ./Diapo*"
+if OS == "Windows":
+	cmd="del ./Diapo*"
+else:
+	cmd="rm ./Diapo*"
+
 os.system(cmd)
 
 print "Supression effectuée\n"
