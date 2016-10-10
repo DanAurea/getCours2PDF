@@ -119,6 +119,9 @@ else:
 
 os.system(cmd)
 
+## Petite pause pour éviter la suppression alors que les fichiers sont encore utilisés par convert
+sleep(2)
+
 #Supression des images
 print "\nSupression des images téléchargées.\n"
 
