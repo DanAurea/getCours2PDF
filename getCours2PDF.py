@@ -55,9 +55,25 @@ reponse=opener.open('https://cas.univ-lemans.fr/cas/login?service=http%3A%2F%2Fu
 
 print '\nInitialisation de la connexion à l\'UMTICE\n'.decode('utf8')
 
+print '''Choix du module:
+\t1 - TDA et introduction à la POO
+\t2 - Java et POO'''.decode('utf8')
+
+while choix<1 or choix>2:
+	choix=input("\nVotre choix : ")
+
+dossier="TDA-Intro-POO"
+
+if choix == 2:
+	dossier="Java-POO"
+
 #Connexion à la page d'accueil du cours
-reponse=opener.open('http://umtice.univ-lemans.fr/course/view.php?id=328').read()
-#  print reponse
+id="328" # ID pour cours TDA
+
+if(choix == 2):
+	id="327" #	 ID pour cours Java
+
+reponse=opener.open("http://umtice.univ-lemans.fr/course/view.php?id="+id).read()
 
 #Récupération des liens de cours et demande de choix à l'utilisateur
 i=1
@@ -70,6 +86,7 @@ for couple in re.finditer(pattern_cours,reponse):
 
 taille_liste=len(liste_cours_liens)
 
+choix=-1 
 while choix<1 or choix>taille_liste:
 	choix=input("\nVotre choix : ")
 
@@ -84,12 +101,6 @@ except urllib2.HTTPError, err:
 	if err.code==404:
 		print "Lien incorrect !"
 		sys.exit(1)
-
-#Création du dossier contenant les images
-dossier=liste_cours_title[choix-1]
-dossier=re.sub("[:/\\\*?<>]","_",dossier)
-dossier=" ".join(dossier.split())
-dossier=strip_accents(dossier.replace(" ","-"))
 
 if not os.path.exists(dossier):
 	os.makedirs(dossier)
@@ -111,13 +122,17 @@ print "\nGénération du pdf\n".decode("utf8")
 
 os.chdir(dossier)
 
-PDFName=dossier
+#Création du nom de fichier contenant les images
+PDFName=liste_cours_title[choix-1] # Définis le choix
 
+PDFName=re.sub("[:/\\\*?<>]","_",PDFName) # Enlève tout les caractères indésirables
+PDFName=" ".join(PDFName.split()) # Enlève les whitespaces
+PDFName='-'.join(filter(None, strip_accents(PDFName.replace(" ","-")).split("-"))) # Nettoie la chaîne
 
 if OS == "Windows":
-	cmd="magick convert -quality 100 Diapo* TDA-"+PDFName+".pdf"
+	cmd="magick convert -quality 100 Diapo* "+PDFName+".pdf"
 else:
-	cmd="convert -quality 100 Diapo* TDA-"+PDFName+".pdf"
+	cmd="convert -quality 100 Diapo* "+PDFName+".pdf"
 
 os.popen(cmd)
 
@@ -129,7 +144,7 @@ if OS == "Windows":
 else:
 	cmd="rm ./Diapo*"
 
-os.system(cmd)
+os.popen(cmd)
 
 print "Supression effectuée\n"
-print '\nPdf crée à l\'emplacement '.decode("utf8")+dossier+'/'+'TDA-'+PDFName+'.pdf'
+print '\nPdf crée à l\'emplacement '.decode("utf8")+dossier+'/'+PDFName+'.pdf'
